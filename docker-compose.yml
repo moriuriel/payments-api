@@ -1,0 +1,14 @@
+version: "3.7"
+
+services:
+  postgres:
+    container_name: "postgres"
+    image: "postgres:15.0-alpine"
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
+      POSTGRES_DB: payments
+    volumes:
+      - ./_scripts/postgres:/docker-entrypoint-initdb.d
