@@ -8,12 +8,12 @@ CREATE TABLE accounts (
 CREATE TABLE transactions (
   id VARCHAR(36) PRIMARY KEY NOT NULL,
   account_id VARCHAR NOT NULL,
-  amount BIGINT NOT NULL,
+  amount float8 NOT NULL,
   description VARCHAR NOT NULL,
   payment_method VARCHAR NOT NULL,
   card_number VARCHAR(4) NOT NULL,
   card_owner VARCHAR NOT NULL,
-  card_expiration_date DATE NOT NULL,
+  card_expiration_date VARCHAR NOT NULL,
   card_cvv VARCHAR NOT NULL,
   created_at timestamptz NOT NULL DEFAULT (now())
 );
@@ -28,7 +28,7 @@ CREATE TABLE payables (
   status VARCHAR NOT NULL,
   fee VARCHAR NOT NULL,
   payment_date DATE NOT NULL,
-  amount_paid BIGINT NOT NULL,
+  amount_paid float8 NOT NULL,
   created_at timestamptz NOT NULL DEFAULT (now())
 );
 

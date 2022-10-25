@@ -49,7 +49,7 @@ func (t TransactionRepository) Create(ctx context.Context, transaction domain.Tr
 		transaction.CreatedAt(),
 	)
 	if err != nil {
-		return domain.Transaction{}, errors.Wrap(err, "error to create account")
+		return domain.Transaction{}, errors.Wrap(err, "error to create transaction")
 	}
 
 	return transaction, nil

@@ -14,7 +14,7 @@ type (
 		id                 string
 		accountID          string
 		description        string
-		amount             int64
+		amount             float64
 		cardOwner          string
 		cardNumber         string
 		cardExpirationDate string
@@ -24,7 +24,7 @@ type (
 	}
 )
 
-func NewTransaction(ID string, accountID string, description string, amount int64, cardOwner string, cardNumber string, cardExpirationDate string, cardCvv int64, paymentMethod string, createdAt time.Time) Transaction {
+func NewTransaction(ID string, accountID string, description string, amount float64, cardOwner string, cardNumber string, cardExpirationDate string, cardCvv int64, paymentMethod string, createdAt time.Time) Transaction {
 	return Transaction{
 		id:                 ID,
 		accountID:          accountID,
@@ -36,6 +36,17 @@ func NewTransaction(ID string, accountID string, description string, amount int6
 		cardCvv:            cardCvv,
 		paymentMethod:      paymentMethod,
 		createdAt:          createdAt,
+	}
+}
+
+func (t Transaction) CalculateAmountPaid() (float64, int64) {
+	switch t.paymentMethod {
+	case "credit_card":
+		return t.amount - (t.amount / 100 * 5), 5
+	case "debit_card":
+		return t.amount - (t.amount / 100 * 3), 3
+	default:
+		return t.amount, 0
 	}
 }
 
@@ -51,7 +62,7 @@ func (t Transaction) Description() string {
 	return t.description
 }
 
-func (t Transaction) Amount() int64 {
+func (t Transaction) Amount() float64 {
 	return t.amount
 }
 

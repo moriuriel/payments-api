@@ -105,6 +105,7 @@ func (a HTTPServer) buildCreateTransactionHandler() http.HandlerFunc {
 		repositories.NewAccountRepository(a.database),
 		5*time.Second,
 		repositories.NewTransactionRepository(a.database),
+		repositories.NewPayableRepository(a.database),
 	)
 
 	return handlers.NewCreateTransactionHandler(uc).Execute
