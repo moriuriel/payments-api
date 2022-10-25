@@ -2,9 +2,10 @@ package usecase
 
 import (
 	"context"
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/moriuriel/go-payments/domain"
-	"time"
 )
 
 type (
@@ -29,11 +30,12 @@ type (
 		CardExpirationDate string    `json:"card_expiration_date"`
 		CardCvv            int64     `json:"card_cvv"`
 		PaymentMethod      string    `json:"payment_method"`
+		PayableID          string    `json:"payable_id"`
 		CreatedAt          time.Time `json:"created_at"`
 	}
 
 	CreateTransactionPresenter interface {
-		Output(transaction domain.Transaction) CreateTransactionOutput
+		Output(transaction domain.Transaction, PayableID string) CreateTransactionOutput
 	}
 
 	CreateTransactionUsecase interface {
@@ -94,17 +96,17 @@ func (uc CreateTransactionContainer) Execute(ctx context.Context, input CreateTr
 			return err
 		}
 
-		amountPaid, fee := transaction.CalculateAmountPaid()
-		paymentDate := time.Now()
+		paymentMethod := domain.NewMethod(domain.PaymentMethod(input.PaymentMethod))
+		amountPaid, fee := paymentMethod.CalculateAmountPaid(transaction.Amount())
 
 		payable = domain.NewPayable(
 			uuid.New().String(),
 			transactionID,
 			input.AccountID,
 			amountPaid,
-			"paid",
+			paymentMethod.PaymentStatus(),
 			fee,
-			paymentDate,
+			paymentMethod.PaymentDate(),
 			time.Now(),
 		)
 
@@ -115,8 +117,8 @@ func (uc CreateTransactionContainer) Execute(ctx context.Context, input CreateTr
 		return nil
 	})
 	if err != nil {
-		return uc.presenter.Output(domain.Transaction{}), err
+		return uc.presenter.Output(domain.Transaction{}, ""), err
 	}
 
-	return uc.presenter.Output(transaction), nil
+	return uc.presenter.Output(transaction, payable.ID()), nil
 }

@@ -2,8 +2,9 @@ package usecase
 
 import (
 	"context"
-	"github.com/google/uuid"
 	"time"
+
+	"github.com/google/uuid"
 
 	"github.com/moriuriel/go-payments/domain"
 )

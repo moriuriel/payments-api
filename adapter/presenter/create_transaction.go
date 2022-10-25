@@ -11,7 +11,7 @@ func NewCreateTransactionPresenter() usecase.CreateTransactionPresenter {
 	return createTransactionPresenter{}
 }
 
-func (c createTransactionPresenter) Output(transaction domain.Transaction) usecase.CreateTransactionOutput {
+func (c createTransactionPresenter) Output(transaction domain.Transaction, payableID string) usecase.CreateTransactionOutput {
 	return usecase.CreateTransactionOutput{
 		ID:                 transaction.ID(),
 		AccountID:          transaction.AccountID(),
@@ -22,6 +22,7 @@ func (c createTransactionPresenter) Output(transaction domain.Transaction) useca
 		CardCvv:            transaction.CardCvv(),
 		CardExpirationDate: transaction.CardExpirationDate(),
 		PaymentMethod:      transaction.PaymentMethod(),
+		PayableID:          payableID,
 		CreatedAt:          transaction.CreatedAt(),
 	}
 }
