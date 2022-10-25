@@ -3,6 +3,7 @@ package repositories
 import (
 	"context"
 	"database/sql"
+
 	"github.com/moriuriel/go-payments/domain"
 	"github.com/pkg/errors"
 )
@@ -69,4 +70,18 @@ func (t PayableRepository) ExecuteWithTransaction(ctx context.Context, fn func(c
 	}
 
 	return tx.Commit()
+}
+
+func (t PayableRepository) SumAmountPaidByStatus(ctx context.Context, status string, accountID string) (float64, error) {
+
+	var (
+		query = `SELECT SUM(amount_paid) AS total FROM payables WHERE status='$1' and account_id='$2';`
+		total float64
+	)
+
+	err := t.db.QueryRowContext(ctx, query, status, accountID).Scan(&total)
+	if err != nil {
+		return 0, errors.Wrap(err, "error to sum amount_paid")
+	}
+	return total, nil
 }

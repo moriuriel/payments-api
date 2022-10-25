@@ -9,6 +9,7 @@ type (
 	PayableRepository interface {
 		Create(ctx context.Context, payable Payable) (Payable, error)
 		ExecuteWithTransaction(ctx context.Context, fn func(ctxFn context.Context) error) error
+		SumAmountPaidByStatus(ctx context.Context, status string, accountID string) (float64, error)
 	}
 	Payable struct {
 		id            string
