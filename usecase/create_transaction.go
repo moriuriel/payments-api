@@ -84,7 +84,7 @@ func (uc CreateTransactionContainer) Execute(ctx context.Context, input CreateTr
 			input.Description,
 			input.Amount,
 			input.CardOwner,
-			input.CardNumber,
+			domain.CardNumber(input.CardNumber).LastFourDigit(),
 			input.CardExpirationDate,
 			input.CardCvv,
 			input.PaymentMethod,

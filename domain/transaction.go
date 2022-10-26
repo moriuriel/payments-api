@@ -23,6 +23,11 @@ type (
 		createdAt          time.Time
 	}
 )
+type CardNumber string
+
+func (Card CardNumber) LastFourDigit() string {
+	return string(Card[len(Card)-4:])
+}
 
 func NewTransaction(ID string, accountID string, description string, amount float64, cardOwner string, cardNumber string, cardExpirationDate string, cardCvv int64, paymentMethod string, createdAt time.Time) Transaction {
 	return Transaction{
