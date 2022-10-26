@@ -3,6 +3,7 @@ package repositories
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	"github.com/moriuriel/go-payments/domain"
 	"github.com/pkg/errors"
@@ -84,4 +85,50 @@ func (t PayableRepository) SumAmountPaidByStatus(ctx context.Context, status str
 		return 0, errors.Wrap(err, "error to sum amount_paid")
 	}
 	return total, nil
+}
+
+func (t PayableRepository) FindAll(ctx context.Context) ([]domain.Payable, error) {
+	var query = "SELECT * FROM payables"
+
+	rows, err := t.db.QueryContext(ctx, query)
+	if err != nil {
+		return []domain.Payable{}, errors.Wrap(err, "error to listing payable")
+	}
+
+	payables := make([]domain.Payable, 0)
+	for rows.Next() {
+		var (
+			ID            string
+			accountID     string
+			transactionID string
+			amountPaid    float64
+			status        string
+			fee           int64
+			paymentDate   time.Time
+			createdAt     time.Time
+		)
+
+		err = rows.Scan(&ID, &accountID, &transactionID, &amountPaid, &status, &fee, &paymentDate, &createdAt)
+		if err != nil {
+			return []domain.Payable{}, errors.Wrap(err, "error to listing payable")
+		}
+
+		payables = append(payables, domain.NewPayable(
+			ID,
+			accountID,
+			transactionID,
+			amountPaid,
+			status,
+			fee,
+			paymentDate,
+			createdAt,
+		))
+	}
+	defer rows.Close()
+	if err = rows.Err(); err != nil {
+		return []domain.Payable{}, err
+	}
+
+	return payables, nil
+
 }
