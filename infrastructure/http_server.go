@@ -35,13 +35,14 @@ func NewHTTPServer() *HTTPServer {
 }
 
 func (a HTTPServer) Start() {
-	routes := a.router.PathPrefix("/api/v1").Subrouter()
+	routes := a.router.PathPrefix("/api").Subrouter()
 
-	routes.HandleFunc("/health", healthCheck).Methods(http.MethodGet)
-	routes.HandleFunc("/accounts", a.buildCreateAccountHandler()).Methods(http.MethodPost)
-	routes.HandleFunc("/accounts/{id}", a.buildFindAccountByIDHandler()).Methods(http.MethodGet)
-	routes.HandleFunc("/transactions", a.buildCreateTransactionHandler()).Methods(http.MethodPost)
-	routes.HandleFunc("/total/payable/{account_id}", a.buildFindTotalPayableByAccountIDHandler()).Methods(http.MethodGet)
+	routes.HandleFunc("/v1/health", healthCheck).Methods(http.MethodGet)
+	routes.HandleFunc("/v1/accounts", a.buildCreateAccountHandler()).Methods(http.MethodPost)
+	routes.HandleFunc("/v1/accounts/{id}", a.buildFindAccountByIDHandler()).Methods(http.MethodGet)
+	routes.HandleFunc("/v1/transactions", a.buildCreateTransactionHandler()).Methods(http.MethodPost)
+	routes.HandleFunc("/v1/total/payable/{account_id}", a.buildFindTotalPayableByAccountIDHandler()).Methods(http.MethodGet)
+	routes.HandleFunc("/v1/payables/{account_id}", a.buildFindAllPayableByAccountIDHandler()).Methods(http.MethodGet)
 
 	server := &http.Server{
 		ReadTimeout:  15 * time.Second,
@@ -121,4 +122,15 @@ func (a HTTPServer) buildFindTotalPayableByAccountIDHandler() http.HandlerFunc {
 	)
 
 	return handlers.NewFindTotalPayableByAccountIDHandler(uc).Execute
+}
+
+func (a HTTPServer) buildFindAllPayableByAccountIDHandler() http.HandlerFunc {
+
+	uc := usecase.NewFindAllPayableByAccountIDContainer(
+		repositories.NewPayableRepository(a.database),
+		5*time.Second,
+		presenter.NewFindAllPayableByAccountIDPresenter(),
+	)
+
+	return handlers.NewFindAllPayableByAccountIDHandler(uc).Execute
 }

@@ -87,10 +87,10 @@ func (t PayableRepository) SumAmountPaidByStatus(ctx context.Context, status str
 	return total, nil
 }
 
-func (t PayableRepository) FindAll(ctx context.Context) ([]domain.Payable, error) {
-	var query = "SELECT * FROM payables"
+func (t PayableRepository) FindAllByAccountID(ctx context.Context, accountID string) ([]domain.Payable, error) {
+	var query = "SELECT * FROM payables WHERE account_id = $1"
 
-	rows, err := t.db.QueryContext(ctx, query)
+	rows, err := t.db.QueryContext(ctx, query, accountID)
 	if err != nil {
 		return []domain.Payable{}, errors.Wrap(err, "error to listing payable")
 	}
@@ -108,7 +108,7 @@ func (t PayableRepository) FindAll(ctx context.Context) ([]domain.Payable, error
 			createdAt     time.Time
 		)
 
-		err = rows.Scan(&ID, &accountID, &transactionID, &amountPaid, &status, &fee, &paymentDate, &createdAt)
+		err = rows.Scan(&ID, &accountID, &transactionID, &status, &fee, &paymentDate, &amountPaid, &createdAt)
 		if err != nil {
 			return []domain.Payable{}, errors.Wrap(err, "error to listing payable")
 		}

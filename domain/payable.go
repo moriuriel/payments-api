@@ -10,7 +10,7 @@ type (
 		Create(ctx context.Context, payable Payable) (Payable, error)
 		ExecuteWithTransaction(ctx context.Context, fn func(ctxFn context.Context) error) error
 		SumAmountPaidByStatus(ctx context.Context, status string, accountID string) (float64, error)
-		FindAll(ctx context.Context) ([]Payable, error)
+		FindAllByAccountID(ctx context.Context, AccountID string) ([]Payable, error)
 	}
 	Payable struct {
 		id            string
