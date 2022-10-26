@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 
 	"github.com/moriuriel/go-payments/adapter/api/response"
@@ -22,6 +24,13 @@ func NewFindAccountByIDHandler(uc usecase.FindAccountByIDUsecase) FindAccountByI
 func (h FindAccountByIDHandler) Execute(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id := params["id"]
+
+	_, err := uuid.Parse(id)
+	if err != nil {
+		error := errors.New("invalid account_id")
+		response.NewError(error, http.StatusBadRequest).Send(w)
+		return
+	}
 
 	output, err := h.uc.Execute(r.Context(), id)
 	if err != nil {
