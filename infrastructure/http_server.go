@@ -41,6 +41,7 @@ func (a HTTPServer) Start() {
 	routes.HandleFunc("/accounts", a.buildCreateAccountHandler()).Methods(http.MethodPost)
 	routes.HandleFunc("/accounts/{id}", a.buildFindAccountByIDHandler()).Methods(http.MethodGet)
 	routes.HandleFunc("/transactions", a.buildCreateTransactionHandler()).Methods(http.MethodPost)
+	routes.HandleFunc("/total/payable/{account_id}", a.buildFindTotalPayableByAccountIDHandler()).Methods(http.MethodGet)
 
 	server := &http.Server{
 		ReadTimeout:  15 * time.Second,
@@ -109,4 +110,15 @@ func (a HTTPServer) buildCreateTransactionHandler() http.HandlerFunc {
 	)
 
 	return handlers.NewCreateTransactionHandler(uc).Execute
+}
+
+func (a HTTPServer) buildFindTotalPayableByAccountIDHandler() http.HandlerFunc {
+
+	uc := usecase.NewFindTotalPayableByAccountIDContainer(
+		repositories.NewPayableRepository(a.database),
+		5*time.Second,
+		presenter.NewFindTotalPayableByAccountIDPresenter(),
+	)
+
+	return handlers.NewFindTotalPayableByAccountIDHandler(uc).Execute
 }

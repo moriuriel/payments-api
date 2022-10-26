@@ -18,7 +18,7 @@ type (
 	}
 
 	FindTotalPayableByAccountIDUsecase interface {
-		Execute(context.Context, string, string) (FindTotalPayableByAccountIDOutput, error)
+		Execute(context.Context, string) (FindTotalPayableByAccountIDOutput, error)
 	}
 
 	FindTotalPayableByAccountIDPresenter interface {

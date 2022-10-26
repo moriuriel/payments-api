@@ -1,6 +1,8 @@
 package presenter
 
-import "github.com/moriuriel/go-payments/usecase"
+import (
+	"github.com/moriuriel/go-payments/usecase"
+)
 
 type findPayableByAccountIDPresenter struct{}
 

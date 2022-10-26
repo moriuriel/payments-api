@@ -75,7 +75,7 @@ func (t PayableRepository) ExecuteWithTransaction(ctx context.Context, fn func(c
 func (t PayableRepository) SumAmountPaidByStatus(ctx context.Context, status string, accountID string) (float64, error) {
 
 	var (
-		query = `SELECT SUM(amount_paid) AS total FROM payables WHERE status='$1' and account_id='$2';`
+		query = "SELECT SUM(amount_paid) AS total FROM payables WHERE status = $1 and account_id = $2;"
 		total float64
 	)
 
